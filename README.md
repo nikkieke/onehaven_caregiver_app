@@ -2,15 +2,56 @@
 
 A new Flutter project.
 
-## Getting Started
+## 🚀 Project Setup Guide
 
-This project is a starting point for a Flutter application.
+This project was built using:
 
-A few resources to get you started if this is your first Flutter project:
+**Flutter SDK: 3.29.0**
+(You may use any recent stable version, but this is the version tested.)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## 📦 Getting Started
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Follow the steps below to run the project locally.
+
+### Clone the Repository
+
+``` bash
+
+git clone https://github.com/nikkieke/onehaven_caregiver_app.git
+cd onehaven_caregiver_app
+
+```
+
+### Install Dependencies
+
+``` bash
+
+flutter pub get
+
+```
+
+### Start the Mock Backend (Required)
+This project uses a local mock server for data fetching, powered by Dart Shelf.
+
+Start the server:
+
+``` bash
+cd mock_server
+dart run bin/mock_server.dart
+
+```
+
+Make sure you see:
+
+``` bash
+Mock server running on http://localhost:8080
+
+```
+
+### Run the App
+
+``` bash
+
+flutter run
+
+```
