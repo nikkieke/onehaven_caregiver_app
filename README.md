@@ -30,6 +30,14 @@ flutter pub get
 
 ```
 
+### Generate Hive files 
+
+``` bash
+
+flutter pub run build_runner build --delete-conflicting-outputs
+
+```
+
 ### Start the Mock Backend (Required)
 This project uses a local mock server for data fetching, powered by Dart Shelf.
 

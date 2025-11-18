@@ -16,7 +16,7 @@ class NetworkService {
 
   BaseOptions get baseOption => BaseOptions();
 
-  String get baseUrl => '';
+  String get baseUrl => 'http://localhost:8080';
 
   Map<String, String> get headers => {
     'accept': 'application/json',
@@ -35,8 +35,8 @@ class NetworkService {
       switch (method) {
         case RequestMethod.get:
           response = await _dio.get(path);
-        case RequestMethod.post:
-          response = await _dio.post(path, data: data);
+        case RequestMethod.put:
+          response = await _dio.put(path, data: data);
       }
       return response;
     } on DioException catch (e) {
@@ -45,4 +45,4 @@ class NetworkService {
   }
 }
 
-enum RequestMethod { get, post }
+enum RequestMethod { get, put }

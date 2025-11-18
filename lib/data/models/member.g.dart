@@ -60,3 +60,37 @@ class MemberAdapter extends TypeAdapter<Member> {
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
+
+class MembersListAdapter extends TypeAdapter<MembersList> {
+  @override
+  final int typeId = 1;
+
+  @override
+  MembersList read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return MembersList(
+      members: (fields[0] as List?)?.cast<Member>(),
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, MembersList obj) {
+    writer
+      ..writeByte(1)
+      ..writeByte(0)
+      ..write(obj.members);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is MembersListAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}

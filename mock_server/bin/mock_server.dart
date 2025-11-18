@@ -9,7 +9,11 @@ Future<void> main() async {
 
   // get members from file
   final file = File('bin/members.json');
-  final response = jsonDecode(await file.readAsString());
+  final response =
+      jsonDecode(await file.readAsString()) as List<Map<String, dynamic>>;
+
+  // PUT /toggleScreenTime
+  router.put('/toggleScreenTime/<id>', updateRequestHandler);
 
   // GET /members
   router.get('/members', (Request request) {
@@ -28,4 +32,32 @@ Future<void> main() async {
   final server = await serve(handler, InternetAddress.anyIPv4, 8080);
 
   print('Mock server running on http://localhost:${server.port}');
+}
+
+Future<Response> updateRequestHandler(Request request, String id) async {
+  // get members from file
+  final file = File('bin/members.json');
+  final memberList =
+      jsonDecode(await file.readAsString()) as List<Map<String, dynamic>>;
+
+  final index = memberList.indexWhere((e) => e['id'] == id);
+
+  if (index == -1) {
+    return Response.notFound(
+      jsonEncode(({'status': 'Member not found'})),
+      headers: {'Content-Type': 'application/json'},
+    );
+  }
+
+  final member = memberList[index];
+  member['screenTimeEnabled'] = !member['screenTimeEnabled'];
+
+  memberList[index] = member;
+
+  await file.writeAsString(jsonEncode(memberList));
+
+  return Response.ok(
+    jsonEncode(({'status': 'success'})),
+    headers: {'Content-Type': 'application/json'},
+  );
 }

@@ -21,8 +21,6 @@ class AuthService {
         sharedPrefHandler?.setString('token', '1234567890');
         // simulate real api call
         await Future.delayed(Duration(seconds: 5));
-        final token = await sharedPrefHandler?.getString('token');
-        print('tokennnn $token');
         return true;
       } else {
         await Future.delayed(Duration(seconds: 5));

@@ -26,7 +26,7 @@ class Member extends HiveObject {
   final String? status;
 
   @HiveField(7)
-  final bool screenTimeEnabled;
+  final bool? screenTimeEnabled;
 
   Member({
     this.id,
@@ -68,4 +68,32 @@ class Member extends HiveObject {
       'screenTimeEnabled': screenTimeEnabled,
     };
   }
+
+  Member copyWith({
+    String? id,
+    String? firstName,
+    String? lastName,
+    int? birthYear,
+    String? relationship,
+    String? avatar,
+    bool? screenTimeEnabled,
+  }) {
+    return Member(
+      id: id ?? id,
+      firstName: firstName ?? firstName,
+      lastName: lastName ?? lastName,
+      birthYear: birthYear ?? birthYear,
+      relationship: relationship ?? relationship,
+      avatar: avatar ?? avatar,
+      screenTimeEnabled: screenTimeEnabled ?? screenTimeEnabled,
+    );
+  }
+}
+
+@HiveType(typeId: 1)
+class MembersList {
+  MembersList({this.members});
+
+  @HiveField(0)
+  final List<Member>? members;
 }

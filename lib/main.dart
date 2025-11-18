@@ -10,6 +10,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   Hive.registerAdapter(MemberAdapter());
+  Hive.registerAdapter(MembersListAdapter());
   await CacheService.instance.init();
   await SharedPrefHandler.instance.init();
   runApp(ProviderScope(child: const MyApp()));

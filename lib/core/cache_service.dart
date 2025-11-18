@@ -1,5 +1,9 @@
 import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:onehaven_caregiver_app/data/models/member.dart';
+
+final cacheServiceProvider = Provider((ref) => CacheService());
 
 class CacheService {
   CacheService._();
@@ -10,17 +14,17 @@ class CacheService {
 
   late Box<dynamic> hiveBox;
 
-  Future<void> openBox(String boxName) async {
-    hiveBox = await Hive.openBox<dynamic>(boxName);
+  Future<void> openMemberBox(String boxName) async {
+    hiveBox = await Hive.openBox<MembersList>(boxName);
   }
 
   Future<void> init() async {
-    await openBox('OneHaven');
+    await openMemberBox('Members');
     debugPrint('opened');
   }
 
   dynamic get(String key) {
-    return hiveBox.get(key);
+    return hiveBox.get(key, defaultValue: [] as List<Member>);
   }
 
   Future<void> set(String? key, dynamic data) async {
