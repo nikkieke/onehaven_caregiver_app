@@ -164,46 +164,54 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   // Forgot Password
                   Align(
                     alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () {},
-                      child: Text(
-                        'Forgot Password?',
-                        style: TextStyle(color: Colors.teal[700]),
+                    child: Semantics(
+                      label: 'Forgot Password button',
+                      button: true,
+                      child: TextButton(
+                        onPressed: () {},
+                        child: Text(
+                          'Forgot Password?',
+                          style: TextStyle(color: Colors.teal[700]),
+                        ),
                       ),
                     ),
                   ),
                   const SizedBox(height: 24),
 
-                  ElevatedButton(
-                    onPressed: isLoading ? null : _handleLogin,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.teal[700],
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                  Semantics(
+                    label: 'Login button',
+                    button: true,
+                    child: ElevatedButton(
+                      onPressed: isLoading ? null : _handleLogin,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.teal[700],
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 2,
                       ),
-                      elevation: 2,
-                    ),
-                    child:
-                        isLoading
-                            ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  Colors.white,
+                      child:
+                          isLoading
+                              ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.white,
+                                  ),
+                                ),
+                              )
+                              : const Text(
+                                'Login',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
-                            )
-                            : const Text(
-                              'Login',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                    ),
                   ),
                   const SizedBox(height: 24),
                   Row(
@@ -213,13 +221,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         "Don't have an account? ",
                         style: TextStyle(color: Colors.grey[600]),
                       ),
-                      TextButton(
-                        onPressed: () {},
-                        child: Text(
-                          'Sign Up',
-                          style: TextStyle(
-                            color: Colors.teal[700],
-                            fontWeight: FontWeight.bold,
+                      Semantics(
+                        label: 'Sign up button',
+                        button: true,
+                        child: TextButton(
+                          onPressed: () {},
+                          child: Text(
+                            'Sign Up',
+                            style: TextStyle(
+                              color: Colors.teal[700],
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),

@@ -1,9 +1,9 @@
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:onehaven_caregiver_app/data/models/member.dart';
 import 'package:onehaven_caregiver_app/data/services/members_service.dart';
 
-enum MemberLoadingState { idle, loadingMembers }
+enum MemberLoadingState { idle, loadingMembers, syncing }
 
 class MemberState {
   MemberState({
@@ -11,24 +11,28 @@ class MemberState {
     this.toggle = false,
     this.memberList = const [],
     this.member,
+    this.queueChanges = 0,
   });
 
   final List<Member>? memberList;
   final MemberLoadingState? loadingState;
   final bool? toggle;
   final Member? member;
+  final int? queueChanges;
 
   MemberState copyWith({
     List<Member>? memberList,
     MemberLoadingState? loadingState,
     bool? toggle,
     Member? member,
+    int? queueChanges,
   }) {
     return MemberState(
-      memberList: memberList ?? memberList,
-      toggle: toggle ?? toggle,
-      loadingState: loadingState ?? loadingState,
-      member: member ?? member,
+      memberList: memberList ?? this.memberList,
+      toggle: toggle ?? this.toggle,
+      loadingState: loadingState ?? this.loadingState,
+      member: member ?? this.member,
+      queueChanges: queueChanges ?? this.queueChanges,
     );
   }
 }
@@ -44,18 +48,10 @@ class MemberStateNotifier extends StateNotifier<MemberState> {
 
   final MembersService service;
 
-  Future<bool> isOffline() async {
-    final result = await Connectivity().checkConnectivity();
-    return result == ConnectivityResult.none;
-  }
-
   Future<List<Member>> updateMembersFromCache() async {
-    final offline = await isOffline();
-    if (!offline) {
-      await service.syncOfflineUpdates();
-    }
     final members = service.getMembersFromCache();
-    state = state.copyWith(memberList: members);
+    final queuedChanges = await service.getPendingLength();
+    state = state.copyWith(memberList: members, queueChanges: queuedChanges);
     return members;
   }
 
@@ -82,11 +78,31 @@ class MemberStateNotifier extends StateNotifier<MemberState> {
           return e;
         }).toList();
 
-    state = state.copyWith(memberList: updatedMembersList);
     await service.toggleScreenTime('${member.id}');
+    final queuedChanges = await service.getPendingLength();
+    state = state.copyWith(
+      queueChanges: queuedChanges,
+      memberList: updatedMembersList,
+    );
+  }
+
+  Future<void> syncOfflineUpdates() async {
+    state = state.copyWith(loadingState: MemberLoadingState.syncing);
+    await service.syncOfflineUpdates();
+    final queuedChanges = await service.getPendingLength();
+    state = state.copyWith(
+      loadingState: MemberLoadingState.idle,
+      queueChanges: queuedChanges,
+    );
   }
 }
 
 final membersListProvider = FutureProvider((ref) async {
   return await ref.read(membersStateProvider.notifier).getMembers();
+});
+
+final internetCheckerProvider = StreamProvider<bool>((ref) {
+  return InternetConnectionChecker.instance.onStatusChange.map((status) {
+    return status == InternetConnectionStatus.connected;
+  });
 });

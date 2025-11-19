@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:onehaven_caregiver_app/data/models/member.dart';
+import 'package:onehaven_caregiver_app/presentation/widgets/avatar_widget.dart';
 import 'package:onehaven_caregiver_app/presentation/widgets/info_card.dart';
 
 class MembersDetailScreen extends StatefulWidget {
@@ -37,11 +38,7 @@ class _MembersDetailScreenState extends State<MembersDetailScreen> {
               ),
               child: Column(
                 children: [
-                  CircleAvatar(
-                    radius: 60,
-                    backgroundImage: NetworkImage('${widget.member.avatar}'),
-                    backgroundColor: Colors.white,
-                  ),
+                  AvatarWidget(url: '${widget.member.avatar}', diameter: 60),
                   const SizedBox(height: 16),
                   Text(
                     widget.member.fullName,

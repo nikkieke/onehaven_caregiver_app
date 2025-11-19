@@ -1,6 +1,6 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:onehaven_caregiver_app/data/models/member.dart';
+import 'package:onehaven_caregiver_app/presentation/widgets/avatar_widget.dart';
 
 class MemberCard extends StatelessWidget {
   final Member member;
@@ -28,30 +28,7 @@ class MemberCard extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
-              ClipOval(
-                child: CachedNetworkImage(
-                  height: 60,
-                  width: 60,
-                  imageUrl: "${member.avatar}",
-                  imageBuilder:
-                      (context, imageProvider) => Container(
-                        height: 60,
-                        width: 60,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                            image: imageProvider,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                  placeholder:
-                      (context, url) =>
-                          CircularProgressIndicator(color: Colors.teal),
-                  errorWidget: (context, url, error) => Icon(Icons.error),
-                  color: Colors.grey[200],
-                ),
-              ),
+              AvatarWidget(url: '${member.avatar}', diameter: 60),
               const SizedBox(width: 16),
               Expanded(
                 child: Column(

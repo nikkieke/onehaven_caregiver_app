@@ -161,4 +161,9 @@ class MembersService {
     }
     return pendingList;
   }
+
+  Future<int> getPendingLength() async {
+    final list = await getPendingList();
+    return list.isEmpty ? 0 : list.length;
+  }
 }
