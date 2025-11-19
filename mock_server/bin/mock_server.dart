@@ -7,18 +7,17 @@ import 'package:shelf_router/shelf_router.dart';
 Future<void> main() async {
   final router = Router();
 
-  // get members from file
-  final file = File('bin/members.json');
-  final response =
-      jsonDecode(await file.readAsString()) as List<Map<String, dynamic>>;
-
   // PUT /toggleScreenTime
   router.put('/toggleScreenTime/<id>', updateRequestHandler);
 
   // GET /members
-  router.get('/members', (Request request) {
+  router.get('/members', (Request request) async {
+    // get members from file
+    final file = File('bin/members.json');
+    final data = jsonDecode(await file.readAsString());
+
     return Response.ok(
-      jsonEncode(response),
+      jsonEncode(data),
       headers: {'Content-Type': 'application/json'},
     );
   });
@@ -31,14 +30,13 @@ Future<void> main() async {
   // serve
   final server = await serve(handler, InternetAddress.anyIPv4, 8080);
 
-  print('Mock server running on http://localhost:${server.port}');
+  print('Mock server running on http://10.0.2.2:${server.port}');
 }
 
 Future<Response> updateRequestHandler(Request request, String id) async {
   // get members from file
   final file = File('bin/members.json');
-  final memberList =
-      jsonDecode(await file.readAsString()) as List<Map<String, dynamic>>;
+  final memberList = jsonDecode(await file.readAsString());
 
   final index = memberList.indexWhere((e) => e['id'] == id);
 
@@ -51,6 +49,13 @@ Future<Response> updateRequestHandler(Request request, String id) async {
 
   final member = memberList[index];
   member['screenTimeEnabled'] = !member['screenTimeEnabled'];
+
+  //update status
+  if (member['status'] == 'active') {
+    member['status'] = 'inactive';
+  } else if (member['status'] == 'inactive') {
+    member['status'] = 'active';
+  }
 
   memberList[index] = member;
 
