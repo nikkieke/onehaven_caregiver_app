@@ -1,3 +1,4 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onehaven_caregiver_app/data/models/member.dart';
 import 'package:onehaven_caregiver_app/data/services/members_service.dart';
@@ -37,19 +38,35 @@ final membersStateProvider = StateNotifierProvider(
 );
 
 class MemberStateNotifier extends StateNotifier<MemberState> {
-  MemberStateNotifier({required this.service}) : super(MemberState());
+  MemberStateNotifier({required this.service}) : super(MemberState()) {
+    updateMembersFromCache();
+  }
 
   final MembersService service;
 
-  void updateMembersFromCache() {
+  Future<bool> isOffline() async {
+    final result = await Connectivity().checkConnectivity();
+    return result == ConnectivityResult.none;
+  }
+
+  Future<List<Member>> updateMembersFromCache() async {
+    final offline = await isOffline();
+    if (!offline) {
+      await service.syncOfflineUpdates();
+    }
     final members = service.getMembersFromCache();
     state = state.copyWith(memberList: members);
+    return members;
   }
 
   Future<List<Member>> getMembers() async {
-    final members = await service.getMembers();
-    state = state.copyWith(memberList: members);
-    return members;
+    if (state.memberList != null && state.memberList!.isEmpty) {
+      final members = await service.getMembers();
+      state = state.copyWith(memberList: members);
+      return state.memberList!;
+    } else {
+      return state.memberList!;
+    }
   }
 
   Future<void> toggle(int index) async {
@@ -57,21 +74,19 @@ class MemberStateNotifier extends StateNotifier<MemberState> {
     final updatedMembersList =
         state.memberList!.map((e) {
           if (e.id == member.id) {
-            e.copyWith(screenTimeEnabled: !e.screenTimeEnabled!);
+            return e.copyWith(
+              screenTimeEnabled: !e.screenTimeEnabled!,
+              status: e.status == 'active' ? 'inactive' : 'active',
+            );
           }
           return e;
         }).toList();
-    state = state.copyWith(memberList: updatedMembersList);
 
+    state = state.copyWith(memberList: updatedMembersList);
     await service.toggleScreenTime('${member.id}');
   }
 }
 
 final membersListProvider = FutureProvider((ref) async {
-  final list = ref.watch(membersStateProvider).memberList;
-  if (list!.isEmpty) {
-    return await ref.read(membersStateProvider.notifier).getMembers();
-  } else {
-    return list;
-  }
+  return await ref.read(membersStateProvider.notifier).getMembers();
 });

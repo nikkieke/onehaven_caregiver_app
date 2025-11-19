@@ -24,7 +24,7 @@ class MemberAdapter extends TypeAdapter<Member> {
       relationship: fields[4] as String?,
       avatar: fields[5] as String?,
       status: fields[6] as String?,
-      screenTimeEnabled: fields[7] as bool,
+      screenTimeEnabled: fields[7] as bool?,
     );
   }
 
@@ -63,7 +63,7 @@ class MemberAdapter extends TypeAdapter<Member> {
 
 class MembersListAdapter extends TypeAdapter<MembersList> {
   @override
-  final int typeId = 1;
+  final int typeId = 2;
 
   @override
   MembersList read(BinaryReader reader) {

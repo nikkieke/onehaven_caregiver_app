@@ -12,26 +12,41 @@ class CacheService {
 
   factory CacheService() => instance;
 
-  late Box<dynamic> hiveBox;
+  late Box<MembersList> hiveBox;
+  late Box<List> pendingBox;
 
   Future<void> openMemberBox(String boxName) async {
     hiveBox = await Hive.openBox<MembersList>(boxName);
   }
 
+  Future<void> openPendingBox(String boxName) async {
+    pendingBox = await Hive.openBox<List>(boxName);
+  }
+
   Future<void> init() async {
     await openMemberBox('Members');
+    await openPendingBox('Pending');
     debugPrint('opened');
   }
 
   dynamic get(String key) {
-    return hiveBox.get(key, defaultValue: [] as List<Member>);
+    return hiveBox.get(key, defaultValue: MembersList());
   }
 
   Future<void> set(String? key, dynamic data) async {
     await hiveBox.put(key, data);
   }
 
+  dynamic getPending(String key) {
+    return pendingBox.get(key, defaultValue: []);
+  }
+
+  Future<void> setPending(String? key, dynamic data) async {
+    await pendingBox.put(key, data);
+  }
+
   Future<void> clear() async {
     await hiveBox.clear();
+    await pendingBox.clear();
   }
 }

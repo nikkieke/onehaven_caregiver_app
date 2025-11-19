@@ -39,7 +39,9 @@ class Member extends HiveObject {
     this.screenTimeEnabled = false,
   });
 
-  int get age => DateTime.now().year - birthYear!;
+  int get age => DateTime.now().year - (birthYear ?? 0);
+
+  String get fullName => '$firstName $lastName';
 
   // From JSON
   factory Member.fromJson(Map<String, dynamic> json) {
@@ -77,20 +79,22 @@ class Member extends HiveObject {
     String? relationship,
     String? avatar,
     bool? screenTimeEnabled,
+    String? status,
   }) {
     return Member(
-      id: id ?? id,
-      firstName: firstName ?? firstName,
-      lastName: lastName ?? lastName,
-      birthYear: birthYear ?? birthYear,
-      relationship: relationship ?? relationship,
-      avatar: avatar ?? avatar,
-      screenTimeEnabled: screenTimeEnabled ?? screenTimeEnabled,
+      id: id ?? this.id,
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
+      birthYear: birthYear ?? this.birthYear,
+      relationship: relationship ?? this.relationship,
+      avatar: avatar ?? this.avatar,
+      screenTimeEnabled: screenTimeEnabled ?? this.screenTimeEnabled,
+      status: status ?? this.status,
     );
   }
 }
 
-@HiveType(typeId: 1)
+@HiveType(typeId: 2)
 class MembersList {
   MembersList({this.members});
 

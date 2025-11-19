@@ -7,16 +7,21 @@ class NetworkService {
   late final Dio _dio;
 
   NetworkService._internal({Dio? dioOverrides}) {
-    dioOverrides ?? Dio(baseOption);
+    _dio = dioOverrides ?? Dio(baseOption);
   }
 
   static final NetworkService _instance = NetworkService._internal();
 
   factory NetworkService() => _instance;
 
-  BaseOptions get baseOption => BaseOptions();
+  BaseOptions get baseOption => BaseOptions(
+    connectTimeout: const Duration(milliseconds: 30000),
+    receiveTimeout: const Duration(milliseconds: 30000),
+    baseUrl: baseUrl,
+    headers: headers,
+  );
 
-  String get baseUrl => 'http://localhost:8080';
+  String get baseUrl => 'http://10.0.2.2:8080';
 
   Map<String, String> get headers => {
     'accept': 'application/json',
@@ -40,7 +45,7 @@ class NetworkService {
       }
       return response;
     } on DioException catch (e) {
-      throw '${e.message}';
+      throw '${e.type}';
     }
   }
 }
