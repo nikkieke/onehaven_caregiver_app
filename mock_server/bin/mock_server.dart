@@ -30,7 +30,7 @@ Future<void> main() async {
   // serve
   final server = await serve(handler, InternetAddress.anyIPv4, 8080);
 
-  print('Mock server running on http://10.0.2.2:${server.port}');
+  print('Mock server running on http://localhost:${server.port}');
 }
 
 Future<Response> updateRequestHandler(Request request, String id) async {
